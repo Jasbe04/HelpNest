@@ -1,0 +1,46 @@
+# ==========================================
+
+# HelpNest - Python Backend Dependencies
+
+# Framework: Django + Django REST Framework
+
+# ==========================================
+
+# Django Framework (LTS)
+
+Django==5.2.8
+
+# REST API
+
+djangorestframework==3.16.1
+
+# JWT Authentication
+
+djangorestframework-simplejwt==5.5.1
+
+# Cross-Origin Resource Sharing (React <-> Django)
+
+django-cors-headers==4.9.0
+
+# Image Upload and Processing
+
+Pillow==12.0.0
+
+# API Filtering and Search
+
+django-filter==25.2
+
+# Environment Variables (.env)
+
+python-dotenv==1.1.1
+
+# Development and Testing
+
+pytest==8.4.2
+pytest-django==4.11.1
+
+npm install react-router-dom
+npm install axios
+npm install bootstrap
+npm install bootstrap-icons
+npm install react-router-dom

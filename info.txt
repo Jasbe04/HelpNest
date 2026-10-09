@@ -1,0 +1,33 @@
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+python -m venv env
+.\env\Scripts\Activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+pip list
+
+python manage.py runserver
+
+django-admin startproject config .
+
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py createsuperuser
+python manage.py startapp accounts
+python manage.py startapp help_requests
+
+npm create vite@latest frontend
+npm install react-router-dom
+npm install axios
+npm install bootstrap
+npm install bootstrap-icons
+npm install react-router-dom
+
+
+passward : d2rAvVH6f@Hq2va 
+
+
+username:admin_help_nest
+passward:d2rAvVH6f@Hq2va
