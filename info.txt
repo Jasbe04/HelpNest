@@ -9,6 +9,8 @@ pip list
 
 python manage.py runserver
 
+npm run dev
+
 django-admin startproject config .
 
 python manage.py makemigrations
@@ -17,6 +19,7 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py startapp accounts
 python manage.py startapp help_requests
+python manage.py startapp mentorship
 
 npm create vite@latest frontend
 npm install react-router-dom

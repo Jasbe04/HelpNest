@@ -1,42 +1,61 @@
-
-
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# =========================================================
+# BASE DIRECTORY
+# =========================================================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# =========================================================
+# SECURITY SETTINGS
+# =========================================================
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-+2m^1$m1d_&)g1)97fhbyh$nril*^_qtrbidlu)zv0+v!=0-!0'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+]
 
 
-# Application definition
+# =========================================================
+# APPLICATION DEFINITION
+# =========================================================
 
 INSTALLED_APPS = [
+    # Django applications
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party applications
+    'rest_framework',
+    'corsheaders',
+
+    # HelpNest applications
     'accounts',
     'help_requests',
-    "rest_framework",
-    "corsheaders",
-
+    'mentorship',
 ]
+
+
+# =========================================================
+# MIDDLEWARE
+# =========================================================
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    # CORS middleware must appear before CommonMiddleware
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -44,13 +63,36 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# =========================================================
+# CORS CONFIGURATION
+# =========================================================
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+
+# =========================================================
+# URL CONFIGURATION
+# =========================================================
+
 ROOT_URLCONF = 'config.urls'
+
+
+# =========================================================
+# TEMPLATE CONFIGURATION
+# =========================================================
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+
         'DIRS': [],
+
         'APP_DIRS': True,
+
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
@@ -61,11 +103,17 @@ TEMPLATES = [
     },
 ]
 
+
+# =========================================================
+# WSGI CONFIGURATION
+# =========================================================
+
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# =========================================================
+# DATABASE CONFIGURATION
+# =========================================================
 
 DATABASES = {
     'default': {
@@ -75,56 +123,91 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# =========================================================
+# CUSTOM USER MODEL
+# =========================================================
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+
+# =========================================================
+# PASSWORD VALIDATION
+# =========================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'UserAttributeSimilarityValidator'
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'MinimumLengthValidator'
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'CommonPasswordValidator'
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'NumericPasswordValidator'
+        ),
     },
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# =========================================================
+# INTERNATIONALIZATION
+# =========================================================
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# =========================================================
+# STATIC FILES
+# =========================================================
 
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = "accounts.CustomUser"
+# =========================================================
+# MEDIA FILES
+# =========================================================
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# =========================================================
+# DJANGO REST FRAMEWORK
+# =========================================================
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 }
+
+
+# =========================================================
+# DEFAULT PRIMARY KEY
+# =========================================================
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -1,21 +1,29 @@
+
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Profile
 
 
 @admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    model = CustomUser
-
+class CustomUserAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "username",
         "email",
-        "is_staff",
+        "account_type",
         "is_active",
     )
 
-    search_fields = ("username", "email")
+    list_filter = (
+        "account_type",
+        "is_active",
+    )
+
+    search_fields = (
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+    )
 
 
 @admin.register(Profile)
@@ -29,15 +37,15 @@ class ProfileAdmin(admin.ModelAdmin):
         "is_available_for_mentorship",
     )
 
+    list_filter = (
+        "institution",
+        "is_available_for_mentorship",
+    )
+
     search_fields = (
         "user__username",
         "user__email",
-        "institution",
         "company",
         "job_title",
     )
 
-    list_filter = (
-        "is_available_for_mentorship",
-        "industry",
-    )

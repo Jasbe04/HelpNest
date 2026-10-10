@@ -12,6 +12,8 @@ urlpatterns = [
         "api/accounts/",
         include("accounts.urls"),
     ),
+    path("api/mentorship/", 
+        include("mentorship.urls")),
 
     # Help request APIs
     path(

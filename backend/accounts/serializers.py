@@ -28,6 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
+            "account_type",  # <-- Added account_type for registration choice
             "password",
             "password2",
         ]
@@ -90,6 +91,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "account_type",  # <-- Added account_type
             "date_joined",
         ]
         read_only_fields = fields
@@ -106,17 +108,24 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    account_type = serializers.CharField(
+        source="user.account_type",
+        read_only=True,
+    )
+
     class Meta:
         model = Profile
         fields = [
             "id",
             "username",
             "email",
+            "account_type",
             "bio",
             "profile_picture",
             "institution",
             "department",
             "graduation_year",
+            "current_term",
             "company",
             "job_title",
             "industry",
@@ -129,6 +138,28 @@ class ProfileSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
+            "account_type",
             "created_at",
             "updated_at",
         ]
+
+    def validate(self, attrs):
+        user = self.instance.user if self.instance else None
+
+        # Enforce Student vs Alumni update permissions
+        if user and user.account_type == "student":
+            restricted_fields = {
+                "company": "Students are not allowed to update company information.",
+                "job_title": "Students are not allowed to update job title.",
+                "industry": "Students are not allowed to update industry.",
+                "is_available_for_mentorship": "Students cannot enable mentorship availability.",
+            }
+
+            for field, message in restricted_fields.items():
+                if field in attrs:
+                    value = attrs[field]
+                    # Block if they provide a non-empty/active value for restricted fields
+                    if value not in [None, "", False]:
+                        raise serializers.ValidationError({field: message})
+
+        return attrs

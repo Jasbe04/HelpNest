@@ -1,17 +1,21 @@
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
 from rest_framework.parsers import (
+    FormParser,
     JSONParser,
     MultiPartParser,
-    FormParser,
 )
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .alumni_serializers import AlumniSerializer
 from .models import Profile
 from .serializers import (
-    RegisterSerializer,
     CurrentUserSerializer,
     ProfileSerializer,
+    RegisterSerializer,
 )
 
 
@@ -31,7 +35,6 @@ class CurrentUserView(APIView):
 class MyProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
-
     parser_classes = [
         JSONParser,
         MultiPartParser,
@@ -43,3 +46,74 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
             user=self.request.user
         )
         return profile
+
+
+class AlumniListAPIView(generics.ListAPIView):
+    """
+    Public API for browsing and searching alumni.
+    """
+
+    serializer_class = AlumniSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = Profile.objects.filter(
+            user__account_type="alumni"
+        ).select_related("user")
+
+        # Search by username, first name, last name, company, job title, or skills.
+        search = self.request.query_params.get("search", "").strip()
+        if search:
+            queryset = queryset.filter(
+                Q(user__username__icontains=search)
+                | Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(company__icontains=search)
+                | Q(job_title__icontains=search)
+                | Q(skills__icontains=search)
+            )
+
+        # Filter by industry.
+        industry = self.request.query_params.get("industry", "").strip()
+        if industry:
+            queryset = queryset.filter(industry__iexact=industry)
+
+        # Filter by company.
+        company = self.request.query_params.get("company", "").strip()
+        if company:
+            queryset = queryset.filter(company__icontains=company)
+
+        # Filter by mentorship availability.
+        mentorship = (
+            self.request.query_params.get("mentorship", "").strip().lower()
+        )
+        if mentorship in ["true", "false"]:
+            queryset = queryset.filter(
+                is_available_for_mentorship=(mentorship == "true")
+            )
+
+        return queryset.order_by("user__first_name", "user__username")
+
+
+class AlumniDetailAPIView(generics.RetrieveAPIView):
+    """
+    Public API for retrieving a single alumni profile.
+    """
+
+    serializer_class = AlumniSerializer
+    permission_classes = [AllowAny]
+    queryset = Profile.objects.filter(
+        user__account_type="alumni"
+    ).select_related("user")
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        pk = self.kwargs.get("pk")
+
+        # Match either the profile ID or the user ID.
+        obj = get_object_or_404(
+            queryset, Q(pk=pk) | Q(user__id=pk)
+        )
+
+        self.check_object_permissions(self.request, obj)
+        return obj

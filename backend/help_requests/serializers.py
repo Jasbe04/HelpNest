@@ -14,12 +14,19 @@ class AnswerSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    author_id = serializers.IntegerField(
+        source="author.id",
+        read_only=True
+    )
+
     class Meta:
         model = Answer
+
         fields = [
             "id",
             "request",
             "author",
+            "author_id",
             "author_username",
             "content",
             "is_accepted",
@@ -31,11 +38,22 @@ class AnswerSerializer(serializers.ModelSerializer):
             "id",
             "request",
             "author",
+            "author_id",
+            "author_username",
             "is_accepted",
             "created_at",
             "updated_at",
         ]
 
+    def validate_content(self, value):
+        value = value.strip()
+
+        if not value:
+            raise serializers.ValidationError(
+                "Answer cannot be empty."
+            )
+
+        return value
 
 class HelpRequestSerializer(serializers.ModelSerializer):
     author_username = serializers.CharField(

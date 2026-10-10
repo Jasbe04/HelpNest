@@ -50,24 +50,28 @@ class HelpRequest(models.Model):
 
 
 class Answer(models.Model):
-    request = models.ForeignKey(HelpRequest,on_delete=models.CASCADE,related_name="answers")
+    request = models.ForeignKey(
+        "help_requests.HelpRequest",
+        on_delete=models.CASCADE,
+        related_name="answers"
+    )
 
-
-    author = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="answers")
-        
-        
-        
-    
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="answers"
+    )
 
     content = models.TextField()
 
     is_accepted = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Answer by {self.author.username} to {self.request.title}"
+        return f"Answer by {self.author} to {self.request.title}"
 
     class Meta:
         ordering = ["created_at"]
