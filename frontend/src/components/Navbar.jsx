@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import api from '../api/axios' // api ইমপোর্ট করা হলো নোটিফিকেশন ফেচ করার জন্য
+import api from '../api/axios'
 
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
   
-  // আনরিড নোটিফিকেশন কাউন্ট রাখার জন্য স্টেট
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
@@ -20,9 +19,10 @@ function Navbar() {
 
   async function fetchUnreadNotificationsCount() {
     try {
-      // আপনার ব্যাকএন্ডের নোটিফিকেশন কাউন্ট বা আনরিড নোটিফিকেশন এপিআই রুট এখানে দিন
-      const response = await api.get('notifications/unread-count/') 
-      setUnreadCount(response.data.unread_count || response.data.count || 0)
+      const response = await api.get('mentorship/notifications/') 
+      const notifications = Array.isArray(response.data) ? response.data : response.data.results || []
+      const unread = notifications.filter(n => !n.is_read).length
+      setUnreadCount(unread)
     } catch (err) {
       console.error('Failed to fetch unread notifications count', err)
     }
@@ -34,7 +34,7 @@ function Navbar() {
   }
 
   const navLinkClass = ({ isActive }) =>
-    `nav-link${isActive ? ' active fw-semibold' : ''}`
+    `nav-link${isActive ? ' active fw-semibold text-primary' : ''}`
 
   return (
     <nav className="navbar navbar-expand-lg bg-white border-bottom sticky-top">
@@ -93,7 +93,6 @@ function Navbar() {
             {/* Authenticated user navigation */}
             {isAuthenticated && (
               <>
-                {/* Student navigation */}
                 {user?.account_type === 'student' && (
                   <NavLink
                     to="/my-mentorships"
@@ -104,7 +103,6 @@ function Navbar() {
                   </NavLink>
                 )}
 
-                {/* Alumni navigation */}
                 {user?.account_type === 'alumni' && (
                   <NavLink
                     to="/received-mentorships"
@@ -115,7 +113,6 @@ function Navbar() {
                   </NavLink>
                 )}
 
-                {/* Notifications with unread count badge */}
                 <NavLink
                   to="/notifications"
                   className={navLinkClass}
@@ -123,7 +120,7 @@ function Navbar() {
                   <i className="bi bi-bell me-1"></i>
                   Notifications
                   {unreadCount > 0 && (
-                    <span className="badge bg-danger rounded-pill ms-2 px-2 py-1" style={{ fontSize: '0.75rem' }}>
+                    <span className="badge bg-danger ms-1">
                       {unreadCount}
                     </span>
                   )}
@@ -136,9 +133,20 @@ function Navbar() {
           <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
             {isAuthenticated ? (
               <>
-                <span className="text-secondary small">
+                <span className="text-secondary small me-2">
                   Hello, {user?.username}
                 </span>
+
+                {/* Admin Panel Link (Visible ONLY to Staff/Superusers) */}
+                {(user?.is_staff || user?.is_superuser) && (
+                  <Link
+                    to="/admin-dashboard"
+                    className="btn btn-warning btn-sm"
+                  >
+                    <i className="bi bi-shield-lock me-1"></i>
+                    Admin Panel
+                  </Link>
+                )}
 
                 {/* Create Help Request: students only */}
                 {user?.account_type === 'student' && (
@@ -152,18 +160,11 @@ function Navbar() {
                 )}
 
                 <Link
-                  to="/dashboard"
-                  className="btn btn-outline-secondary btn-sm"
-                >
-                  Dashboard
-                </Link>
-
-                <Link
                   to="/profile"
                   className="btn btn-outline-secondary btn-sm"
                 >
                   <i className="bi bi-person-circle me-1"></i>
-                  My Profile
+                  Profile
                 </Link>
 
                 <button

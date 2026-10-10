@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import MainLayout from './layouts/MainLayout'
 
@@ -19,21 +19,43 @@ import ReceivedMentorshipRequests from './pages/ReceivedMentorshipRequests'
 import NotificationsPage from './pages/NotificationsPage'
 import MentorshipRequestDetails from './pages/MentorshipRequestDetails'
 
+// Redirect logged-in users away from /login or /register to Home ("/")
+function PublicOnlyRoute({ children }) {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? <Navigate to="/" replace /> : children
+}
+
 function AppRoutes() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
         {/* Public Pages */}
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+
+        {/* Public Only (Redirect to Home if already logged in) */}
+        <Route
+          path="/login"
+          element={
+            <PublicOnlyRoute>
+              <Login />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicOnlyRoute>
+              <Register />
+            </PublicOnlyRoute>
+          }
+        />
 
         {/* Help Requests Directory */}
         <Route path="/help-requests" element={<HelpRequests />} />
 
         {/* Protected Pages */}
         <Route element={<ProtectedRoute />}>
-          {/* Dashboard */}
+          {/* User Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
 
           {/* User Profile */}
@@ -74,19 +96,17 @@ function AppRoutes() {
           <Route path="/notifications" element={<NotificationsPage />} />
         </Route>
 
-        {/* Unknown Routes */}
+        {/* Unknown Routes fallback to Home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   )
 }
 
-function App() {
+export default function App() {
   return (
     <AuthProvider>
       <AppRoutes />
     </AuthProvider>
   )
 }
-
-export default App

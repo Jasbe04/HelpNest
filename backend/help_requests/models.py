@@ -75,4 +75,3 @@ class Answer(models.Model):
 
     class Meta:
         ordering = ["created_at"]
-
