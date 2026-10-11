@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 
@@ -7,12 +6,14 @@ function Profile() {
   const { accessToken } = useAuth()
 
   const [profile, setProfile] = useState({
-    account_type: '', // <-- Track account type
+    account_type: '',
+    email: '',
+    linkedin_url: '',
     bio: '',
     institution: '',
     department: '',
     graduation_year: '',
-    current_term: '', // <-- Added for students
+    current_term: '',
     company: '',
     job_title: '',
     industry: '',
@@ -47,6 +48,8 @@ function Profile() {
 
         setProfile({
           account_type: data.account_type || '',
+          email: data.email || '',
+          linkedin_url: data.linkedin_url || '',
           bio: data.bio || '',
           institution: data.institution || '',
           department: data.department || '',
@@ -112,6 +115,9 @@ function Profile() {
       ...previous,
       [name]: type === 'checkbox' ? checked : value,
     }))
+
+    setError('')
+    setSuccess('')
   }
 
   // Handle image selection.
@@ -129,19 +135,56 @@ function Profile() {
 
     setError('')
     setSuccess('')
+
+    // Validate alumni contact information.
+    if (isAlumni) {
+      const email = profile.email.trim()
+      const linkedinUrl = profile.linkedin_url.trim()
+
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setError('Please enter a valid email address.')
+        return
+      }
+
+      if (linkedinUrl) {
+        try {
+          const url = new URL(linkedinUrl)
+
+          if (
+            !['http:', 'https:'].includes(url.protocol) ||
+            !(
+              url.hostname === 'linkedin.com' ||
+              url.hostname.endsWith('.linkedin.com')
+            ) ||
+            !url.pathname.startsWith('/in/')
+          ) {
+            setError(
+              'Please enter a valid LinkedIn profile URL, such as https://www.linkedin.com/in/your-profile/',
+            )
+            return
+          }
+        } catch {
+          setError(
+            'Please enter a valid LinkedIn profile URL.',
+          )
+          return
+        }
+      }
+    }
+
     setSaving(true)
 
     try {
       const formData = new FormData()
 
       Object.entries(profile).forEach(([key, value]) => {
-        // Do not transmit account_type back since it's read-only/managed by user model
+        // Account type is managed by the user model.
         if (key !== 'account_type') {
           formData.append(key, String(value))
         }
       })
 
-      // Only send a file when the user selects a new picture.
+      // Only send a file when a new picture is selected.
       if (profilePicture) {
         formData.append('profile_picture', profilePicture)
       }
@@ -156,9 +199,17 @@ function Profile() {
         },
       )
 
-      // Update the displayed picture with the saved image URL.
-      setCurrentPictureUrl(response.data.profile_picture || '')
+      // Refresh the displayed values from the saved response.
+      const data = response.data
+
+      setCurrentPictureUrl(data.profile_picture || '')
       setProfilePicture(null)
+
+      setProfile((previous) => ({
+        ...previous,
+        email: data.email ?? previous.email,
+        linkedin_url: data.linkedin_url ?? previous.linkedin_url,
+      }))
 
       setSuccess('Your profile has been updated successfully.')
     } catch (err) {
@@ -167,13 +218,15 @@ function Profile() {
       console.error('Profile update error:', data || err)
 
       if (data && typeof data === 'object') {
-        const messages = Object.entries(data).map(([field, messages]) => {
-          const details = Array.isArray(messages)
-            ? messages.join(' ')
-            : String(messages)
+        const messages = Object.entries(data).map(
+          ([field, messages]) => {
+            const details = Array.isArray(messages)
+              ? messages.join(' ')
+              : String(messages)
 
-          return `${field}: ${details}`
-        })
+            return `${field}: ${details}`
+          },
+        )
 
         setError(messages.join(' | '))
       } else {
@@ -208,13 +261,21 @@ function Profile() {
             <div className="card-body p-4 p-md-5">
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h2 className="fw-bold mb-0">My Profile</h2>
-                <span className={`badge ${isStudent ? 'bg-info' : 'bg-success'}`}>
-                  {profile.account_type ? profile.account_type.toUpperCase() : ''}
+
+                <span
+                  className={`badge ${
+                    isStudent ? 'bg-info' : 'bg-success'
+                  }`}
+                >
+                  {profile.account_type
+                    ? profile.account_type.toUpperCase()
+                    : ''}
                 </span>
               </div>
 
               <p className="text-secondary mb-4">
-                Share information about your education, career, and interests.
+                Share information about your education, career,
+                contact details, and interests.
               </p>
 
               {error && (
@@ -264,6 +325,72 @@ function Profile() {
                   </div>
                 </div>
 
+                {/* Alumni Contact Information */}
+                {isAlumni && (
+                  <>
+                    <hr className="my-4" />
+
+                    <h5 className="fw-bold mb-3">
+                      Contact Information
+                    </h5>
+
+                    {/* Email */}
+                    <div className="mb-3">
+                      <label htmlFor="email" className="form-label">
+                        Email Address
+                      </label>
+
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        className="form-control"
+                        placeholder="you@example.com"
+                        value={profile.email}
+                        onChange={handleChange}
+                        maxLength={254}
+                      />
+
+                      <div className="form-text">
+                        Students can use this email to contact you
+                        about mentorship.
+                      </div>
+                    </div>
+
+                    {/* LinkedIn URL */}
+                    <div className="mb-4">
+                      <label
+                        htmlFor="linkedin_url"
+                        className="form-label"
+                      >
+                        LinkedIn Profile URL
+                      </label>
+
+                      <div className="input-group">
+                        <span className="input-group-text">
+                          <i className="bi bi-linkedin"></i>
+                        </span>
+
+                        <input
+                          id="linkedin_url"
+                          name="linkedin_url"
+                          type="url"
+                          className="form-control"
+                          placeholder="https://www.linkedin.com/in/your-profile/"
+                          value={profile.linkedin_url}
+                          onChange={handleChange}
+                          maxLength={255}
+                        />
+                      </div>
+
+                      <div className="form-text">
+                        Add your public LinkedIn profile URL so
+                        students can view your professional profile.
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* Bio */}
                 <div className="mb-3">
                   <label htmlFor="bio" className="form-label">
@@ -312,7 +439,10 @@ function Profile() {
 
                 {/* Graduation Year */}
                 <div className="mb-3">
-                  <label htmlFor="graduation_year" className="form-label">
+                  <label
+                    htmlFor="graduation_year"
+                    className="form-label"
+                  >
                     Graduation Year
                   </label>
 
@@ -331,7 +461,10 @@ function Profile() {
                 {/* Student-specific field */}
                 {isStudent && (
                   <div className="mb-3">
-                    <label htmlFor="current_term" className="form-label">
+                    <label
+                      htmlFor="current_term"
+                      className="form-label"
+                    >
                       Current Academic Term / Year
                     </label>
 

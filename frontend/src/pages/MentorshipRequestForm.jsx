@@ -163,7 +163,7 @@ export default function MentorshipRequestForm() {
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label">
-                    Mentorship Topic
+                    Mentorship Topic <span className="text-danger">*</span>
                   </label>
 
                   <select
@@ -186,7 +186,7 @@ export default function MentorshipRequestForm() {
 
                 <div className="mb-3">
                   <label className="form-label">
-                    Request Title
+                    Request Title <span className="text-danger">*</span>
                   </label>
 
                   <input
@@ -205,7 +205,7 @@ export default function MentorshipRequestForm() {
 
                 <div className="mb-3">
                   <label className="form-label">
-                    Your Message
+                    Your Message <span className="text-danger">*</span>
                   </label>
 
                   <textarea
@@ -242,7 +242,7 @@ export default function MentorshipRequestForm() {
 
                 <div className="mb-3">
                   <label className="form-label">
-                    Preferred Communication Method
+                    Preferred Communication Method <span className="text-danger">*</span>
                   </label>
 
                   <select

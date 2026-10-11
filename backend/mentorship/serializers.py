@@ -7,6 +7,8 @@ from .models import MentorshipRequest, Notification
 class MentorshipRequestSerializer(serializers.ModelSerializer):
     student_name = serializers.SerializerMethodField()
     mentor_name = serializers.SerializerMethodField()
+    mentor_email = serializers.SerializerMethodField()
+    mentor_linkedin_url = serializers.SerializerMethodField()
 
     topic_display = serializers.CharField(
         source="get_topic_display",
@@ -32,6 +34,8 @@ class MentorshipRequestSerializer(serializers.ModelSerializer):
             "student_name",
             "mentor",
             "mentor_name",
+            "mentor_email",
+            "mentor_linkedin_url",
             "topic",
             "topic_display",
             "title",
@@ -51,6 +55,8 @@ class MentorshipRequestSerializer(serializers.ModelSerializer):
             "student",
             "student_name",
             "mentor_name",
+            "mentor_email",
+            "mentor_linkedin_url",
             "status",
             "status_display",
             "topic_display",
@@ -66,6 +72,19 @@ class MentorshipRequestSerializer(serializers.ModelSerializer):
     def get_mentor_name(self, obj):
         full_name = obj.mentor.get_full_name()
         return full_name or obj.mentor.username
+
+    def get_mentor_email(self, obj):
+        if obj.status == MentorshipRequest.Status.ACCEPTED and obj.mentor:
+            return obj.mentor.email
+        return ""
+
+    def get_mentor_linkedin_url(self, obj):
+        if obj.status == MentorshipRequest.Status.ACCEPTED and obj.mentor:
+            try:
+                return obj.mentor.profile.linkedin_url or ""
+            except AttributeError:
+                return ""
+        return ""
 
     def validate_mentor(self, mentor):
         request = self.context.get("request")

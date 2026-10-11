@@ -148,17 +148,6 @@ function Navbar() {
                   </Link>
                 )}
 
-                {/* Create Help Request: students only */}
-                {user?.account_type === 'student' && (
-                  <Link
-                    to="/help-requests/create"
-                    className="btn btn-primary btn-sm"
-                  >
-                    <i className="bi bi-plus-circle me-1"></i>
-                    Create Request
-                  </Link>
-                )}
-
                 <Link
                   to="/profile"
                   className="btn btn-outline-secondary btn-sm"

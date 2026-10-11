@@ -12,12 +12,18 @@ function CreateHelpRequest() {
   const [formData, setFormData] = useState({
     title: '',
     category: '',
+    customCategory: '',
     description: '',
   })
 
   const [loadingCategories, setLoadingCategories] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+
+  const isOtherSelected =
+    categories.find(
+      (category) => String(category.id) === String(formData.category),
+    )?.name?.trim().toLowerCase() === 'other'
 
   useEffect(() => {
     let cancelled = false
@@ -69,15 +75,25 @@ function CreateHelpRequest() {
     event.preventDefault()
 
     setError('')
+
+    if (isOtherSelected && !formData.customCategory.trim()) {
+      setError('Please enter your custom category.')
+      return
+    }
+
     setSubmitting(true)
 
     try {
+      const finalDescription = isOtherSelected
+        ? `Custom Category: ${formData.customCategory.trim()}\n\n${formData.description.trim()}`
+        : formData.description.trim()
+
       const response = await api.post(
         'help-requests/',
         {
           title: formData.title.trim(),
           category: Number(formData.category),
-          description: formData.description.trim(),
+          description: finalDescription,
         },
         {
           headers: {
@@ -86,7 +102,6 @@ function CreateHelpRequest() {
         },
       )
 
-      // Safely extract the ID regardless of how the backend structures the response
       const newRequestId =
         response.data?.id ||
         response.data?.help_request?.id ||
@@ -156,13 +171,13 @@ function CreateHelpRequest() {
               )}
 
               <form onSubmit={handleSubmit}>
-                {/* Title */}
+                {/* Request Title */}
                 <div className="mb-4">
                   <label
                     htmlFor="title"
                     className="form-label fw-semibold"
                   >
-                    Request Title
+                    Request Title <span className="text-danger">*</span>
                   </label>
 
                   <input
@@ -188,7 +203,7 @@ function CreateHelpRequest() {
                     htmlFor="category"
                     className="form-label fw-semibold"
                   >
-                    Category
+                    Category <span className="text-danger">*</span>
                   </label>
 
                   <select
@@ -225,13 +240,43 @@ function CreateHelpRequest() {
                     )}
                 </div>
 
+                {/* Custom Category */}
+                {isOtherSelected && (
+                  <div className="mb-4">
+                    <label
+                      htmlFor="customCategory"
+                      className="form-label fw-semibold"
+                    >
+                      Enter Your Category <span className="text-danger">*</span>
+                    </label>
+
+                    <input
+                      id="customCategory"
+                      name="customCategory"
+                      type="text"
+                      className="form-control"
+                      placeholder="e.g. Freelancing Marketplace"
+                      value={formData.customCategory}
+                      onChange={handleChange}
+                      maxLength={100}
+                      required
+                    />
+
+                    <div className="form-text">
+                      Your custom category will be used for this
+                      request only. It will not be added to the
+                      permanent category list.
+                    </div>
+                  </div>
+                )}
+
                 {/* Description */}
                 <div className="mb-4">
                   <label
                     htmlFor="description"
                     className="form-label fw-semibold"
                   >
-                    Describe Your Problem
+                    Describe Your Problem <span className="text-danger">*</span>
                   </label>
 
                   <textarea
@@ -254,7 +299,8 @@ function CreateHelpRequest() {
                     disabled={
                       submitting ||
                       loadingCategories ||
-                      categories.length === 0
+                      categories.length === 0 ||
+                      !formData.category
                     }
                   >
                     {submitting ? (

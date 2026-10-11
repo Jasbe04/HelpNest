@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useEffect, useState, useCallback } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import {
   getMentorshipRequest,
   decideMentorshipRequest,
 } from '../services/mentorshipApi'
 
+import { useAuth } from '../context/AuthContext'
+
 function MentorshipRequestDetails() {
   const { requestId } = useParams()
+  const { user, loading: authLoading } = useAuth()
+  const navigate = useNavigate()
 
   const [request, setRequest] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -15,7 +19,23 @@ function MentorshipRequestDetails() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  const loadRequest = async () => {
+  const accountType = user?.account_type
+    ? String(user.account_type).trim().toLowerCase()
+    : ''
+
+  const isAlumni = accountType === 'alumni'
+
+  const status = request?.status
+    ? String(request.status).trim().toLowerCase()
+    : ''
+
+  const isPending = status === 'pending'
+
+  const backPath = isAlumni
+    ? '/received-mentorships'
+    : '/my-mentorships'
+
+  const loadRequest = useCallback(async () => {
     try {
       setError('')
 
@@ -32,13 +52,17 @@ function MentorshipRequestDetails() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [requestId])
 
   useEffect(() => {
     loadRequest()
-  }, [requestId])
+  }, [loadRequest])
 
   const handleDecision = async (decision) => {
+    if (!isAlumni || !isPending || processing) {
+      return
+    }
+
     const action = decision === 'accepted' ? 'accept' : 'reject'
 
     const confirmed = window.confirm(
@@ -75,14 +99,30 @@ function MentorshipRequestDetails() {
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="container py-5 text-center">
-        <div className="spinner-border" role="status">
+        <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
 
-        <p className="mt-3">Loading mentorship request...</p>
+        <p className="mt-3 text-secondary">
+          Loading mentorship request...
+        </p>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="container py-5">
+        <div className="alert alert-warning">
+          Please log in to view this mentorship request.
+        </div>
+
+        <Link to="/login" className="btn btn-primary">
+          Log In
+        </Link>
       </div>
     )
   }
@@ -92,12 +132,13 @@ function MentorshipRequestDetails() {
       <div className="container py-5">
         <div className="alert alert-danger">{error}</div>
 
-        <Link
-          to="/received-mentorships"
+        <button
+          type="button"
           className="btn btn-outline-secondary"
+          onClick={() => navigate(-1)}
         >
-          Back to Received Requests
-        </Link>
+          Go Back
+        </button>
       </div>
     )
   }
@@ -111,8 +152,6 @@ function MentorshipRequestDetails() {
       </div>
     )
   }
-
-  const status = request.status?.toLowerCase()
 
   const statusClasses = {
     pending: 'bg-warning text-dark',
@@ -134,15 +173,20 @@ function MentorshipRequestDetails() {
     request.preferred_communication ||
     'Not specified'
 
+  const mentorEmail = request.mentor_email || ''
+  const mentorLinkedIn = request.mentor_linkedin_url || ''
+
+  const canViewMentorContact = !isAlumni && status === 'accepted'
+
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
         <div className="col-lg-9">
           <Link
-            to="/received-mentorships"
+            to={backPath}
             className="btn btn-outline-secondary mb-4"
           >
-            ← Back to Received Requests
+            ← Back to Requests
           </Link>
 
           <div className="card shadow-sm border-0">
@@ -161,7 +205,7 @@ function MentorshipRequestDetails() {
                 <span
                   className={`badge ${statusClass} text-capitalize fs-6`}
                 >
-                  {status}
+                  {status || 'unknown'}
                 </span>
               </div>
             </div>
@@ -179,28 +223,110 @@ function MentorshipRequestDetails() {
                 </div>
               )}
 
-              {/* Student Information */}
               <section className="mb-4">
-                <h5 className="mb-3">Student Information</h5>
+                <h5 className="mb-3">
+                  {isAlumni
+                    ? 'Student Information'
+                    : 'Mentor Information'}
+                </h5>
 
                 <div className="bg-light rounded p-3">
                   <p className="mb-2">
                     <strong>Name:</strong>{' '}
-                    {request.student_name || 'Not available'}
+                    {isAlumni
+                      ? request.student_name || 'Not available'
+                      : request.mentor_name || 'Not available'}
                   </p>
 
-                  {request.student_email && (
+                  {isAlumni && request.student_email && (
                     <p className="mb-0">
                       <strong>Email:</strong>{' '}
-                      {request.student_email}
+                      <a href={`mailto:${request.student_email}`}>
+                        {request.student_email}
+                      </a>
                     </p>
+                  )}
+
+                  {canViewMentorContact && (
+                    <div className="mt-3 pt-3 border-top">
+                      <h6 className="mb-3">
+                        <i className="bi bi-person-lines-fill me-2"></i>
+                        Mentor Contact Information
+                      </h6>
+
+                      {mentorEmail && (
+                        <p className="mb-3">
+                          <strong>
+                            <i className="bi bi-envelope me-2"></i>
+                            Email:
+                          </strong>{' '}
+                          <a href={`mailto:${mentorEmail}`}>
+                            {mentorEmail}
+                          </a>
+                        </p>
+                      )}
+
+                      {mentorLinkedIn && (
+                        <p className="mb-0">
+                          <strong>
+                            <i className="bi bi-linkedin me-2"></i>
+                            LinkedIn:
+                          </strong>{' '}
+                          <a
+                            href={mentorLinkedIn}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            View Mentor's LinkedIn Profile
+                            <i className="bi bi-box-arrow-up-right ms-1"></i>
+                          </a>
+                        </p>
+                      )}
+
+                      {!mentorEmail && !mentorLinkedIn && (
+                        <p className="text-muted mb-0">
+                          No contact information provided by the mentor.
+                        </p>
+                      )}
+
+                      <div className="alert alert-success mt-3 mb-0">
+                        <i className="bi bi-check-circle me-2"></i>
+                        Your mentorship request has been accepted!
+                        You can now contact your mentor using the
+                        information above.
+                      </div>
+                    </div>
+                  )}
+
+                  {!isAlumni && status === 'pending' && (
+                    <div className="alert alert-info mt-3 mb-0">
+                      <i className="bi bi-info-circle me-2"></i>
+                      Your request is waiting for the mentor's
+                      decision. The mentor's contact information
+                      will become available after acceptance.
+                    </div>
+                  )}
+
+                  {!isAlumni && status === 'rejected' && (
+                    <div className="alert alert-secondary mt-3 mb-0">
+                      <i className="bi bi-info-circle me-2"></i>
+                      Your mentorship request was rejected.
+                      The mentor's contact information is unavailable.
+                    </div>
+                  )}
+
+                  {!isAlumni && status === 'cancelled' && (
+                    <div className="alert alert-secondary mt-3 mb-0">
+                      This mentorship request has been cancelled.
+                    </div>
                   )}
                 </div>
               </section>
 
-              {/* Mentorship Information */}
               <section className="mb-4">
-                <h5 className="mb-3">Mentorship Information</h5>
+                <h5 className="mb-3">
+                  Mentorship Information
+                </h5>
 
                 <div className="row g-3">
                   <div className="col-md-6">
@@ -233,7 +359,10 @@ function MentorshipRequestDetails() {
                         Request Message
                       </small>
 
-                      <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>
+                      <p
+                        className="mb-0"
+                        style={{ whiteSpace: 'pre-wrap' }}
+                      >
                         {request.message || 'No message provided.'}
                       </p>
                     </div>
@@ -245,7 +374,10 @@ function MentorshipRequestDetails() {
                         Specific Questions
                       </small>
 
-                      <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>
+                      <p
+                        className="mb-0"
+                        style={{ whiteSpace: 'pre-wrap' }}
+                      >
                         {request.specific_questions ||
                           'No specific questions provided.'}
                       </p>
@@ -258,7 +390,10 @@ function MentorshipRequestDetails() {
                         Preferred Availability
                       </small>
 
-                      <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>
+                      <p
+                        className="mb-0"
+                        style={{ whiteSpace: 'pre-wrap' }}
+                      >
                         {request.preferred_availability ||
                           'Not specified'}
                       </p>
@@ -267,32 +402,39 @@ function MentorshipRequestDetails() {
                 </div>
               </section>
 
-              {/* Request Dates */}
               <section className="mb-4">
-                <h5 className="mb-3">Request History</h5>
+                <h5 className="mb-3">
+                  Request History
+                </h5>
 
                 <p className="text-muted mb-1">
                   <strong>Submitted:</strong>{' '}
                   {request.created_at
-                    ? new Date(request.created_at).toLocaleString()
+                    ? new Date(
+                        request.created_at
+                      ).toLocaleString()
                     : 'Not available'}
                 </p>
 
                 {request.updated_at && (
                   <p className="text-muted mb-0">
                     <strong>Last Updated:</strong>{' '}
-                    {new Date(request.updated_at).toLocaleString()}
+                    {new Date(
+                      request.updated_at
+                    ).toLocaleString()}
                   </p>
                 )}
               </section>
 
-              {/* Mentor Actions */}
-              {status === 'pending' && (
+              {isAlumni && isPending && (
                 <section className="border-top pt-4">
-                  <h5 className="mb-2">Take Action</h5>
+                  <h5 className="mb-2">
+                    Take Action
+                  </h5>
 
                   <p className="text-muted">
-                    Review the student's request before making a decision.
+                    Review the student's request before making
+                    a decision.
                   </p>
 
                   <div className="d-flex gap-3 flex-wrap">
@@ -300,7 +442,9 @@ function MentorshipRequestDetails() {
                       type="button"
                       className="btn btn-success"
                       disabled={processing}
-                      onClick={() => handleDecision('accepted')}
+                      onClick={() =>
+                        handleDecision('accepted')
+                      }
                     >
                       {processing
                         ? 'Processing...'
@@ -311,7 +455,9 @@ function MentorshipRequestDetails() {
                       type="button"
                       className="btn btn-outline-danger"
                       disabled={processing}
-                      onClick={() => handleDecision('rejected')}
+                      onClick={() =>
+                        handleDecision('rejected')
+                      }
                     >
                       {processing
                         ? 'Processing...'
@@ -321,27 +467,28 @@ function MentorshipRequestDetails() {
                 </section>
               )}
 
-              {/* Accepted Request */}
               {status === 'accepted' && (
                 <section className="alert alert-success mt-4 mb-0">
-                  <h5>Mentorship Request Accepted</h5>
+                  <h5>
+                    <i className="bi bi-check-circle me-2"></i>
+                    Mentorship Request Accepted
+                  </h5>
 
                   <p className="mb-0">
-                    This mentorship request has been accepted. Review
-                    the communication preferences above and coordinate
-                    the next steps with the student.
+                    This mentorship request has been accepted.
                   </p>
                 </section>
               )}
 
-              {/* Rejected Request */}
               {status === 'rejected' && (
                 <section className="alert alert-danger mt-4 mb-0">
-                  <h5>Mentorship Request Rejected</h5>
+                  <h5>
+                    <i className="bi bi-x-circle me-2"></i>
+                    Mentorship Request Rejected
+                  </h5>
 
                   <p className="mb-0">
-                    This request has been rejected. The student can
-                    review the updated status on their mentorship page.
+                    This request has been rejected.
                   </p>
                 </section>
               )}

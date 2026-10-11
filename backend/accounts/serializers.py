@@ -1,11 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
-
 from rest_framework import serializers
 
 from .models import Profile
-
 
 User = get_user_model()
 
@@ -28,7 +26,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
-            "account_type",  # <-- Added account_type for registration choice
+            "account_type",
             "password",
             "password2",
         ]
@@ -91,7 +89,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
-            "account_type",  # <-- Added account_type
+            "account_type",
             "date_joined",
         ]
         read_only_fields = fields
@@ -126,6 +124,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "department",
             "graduation_year",
             "current_term",
+            "linkedin_url",
             "company",
             "job_title",
             "industry",
@@ -146,7 +145,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         user = self.instance.user if self.instance else None
 
-        # Enforce Student vs Alumni update permissions
         if user and user.account_type == "student":
             restricted_fields = {
                 "company": "Students are not allowed to update company information.",
@@ -158,7 +156,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             for field, message in restricted_fields.items():
                 if field in attrs:
                     value = attrs[field]
-                    # Block if they provide a non-empty/active value for restricted fields
                     if value not in [None, "", False]:
                         raise serializers.ValidationError({field: message})
 
