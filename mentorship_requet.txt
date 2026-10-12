@@ -1,0 +1,169 @@
+Demo 1: Job Preparation & Tech Career Guidance
+Mentorship Topic: Job Preparation
+
+Request Title: Guidance on Cracking Entry-Level Software Engineer Interviews
+
+Your Message: Hi, I am a final-year Computer Science student preparing for upcoming off-campus tech recruitment drives. I have built a few full-stack projects, but I struggle with structuring my answers for system design and behavioral rounds.
+
+Specific Questions:
+
+What core technical skills or topics should I prioritize for junior developer interviews?
+
+How can I highlight my personal projects effectively on my resume?
+
+Preferred Communication Method: Email
+
+Preferred Availability: Friday evenings or Saturday afternoons
+
+Demo 2: Freelancing & Remote Work
+Mentorship Topic: Freelancing
+
+Request Title: Help with Starting Web Development Freelancing on Upwork
+
+Your Message: Hello! I have built web apps using React and Django and want to start freelancing in web scraping and backend API development. I'm having trouble getting my first client and writing effective proposals.
+
+Specific Questions:
+
+How do I write a compelling proposal that stands out to clients?
+
+Should I specialize in a specific niche or offer general web development?
+
+Preferred Communication Method: LinkedIn
+
+Preferred Availability: Weekends (Saturday / Sunday)
+
+Demo 3: Machine Learning & AI Career Path
+Mentorship Topic: Career Guidance
+
+Request Title: Transitioning from CSE Student to Machine Learning Engineer
+
+Your Message: Hi, I am very interested in Machine Learning and Data Science. I've taken online courses and completed basic projects using Python and Pandas, but I am unsure how to transition into a full-time ML role in the industry.
+
+Specific Questions:
+
+What production-level ML skills are companies actually looking for?
+
+Is a Master's degree essential, or can I land an entry-level role with strong practical projects?
+
+Preferred Communication Method: Email
+
+Preferred Availability: Weekdays after 7:00 PM
+
+Demo 4: Resume & Portfolio Review
+Mentorship Topic: Resume Review
+
+Request Title: Feedback on Resume and GitHub Profile for Software Roles
+
+Your Message: Hello! I am applying for summer internships and entry-level developer positions. I would really appreciate it if you could review my resume and GitHub portfolio to tell me where I can improve.
+
+Specific Questions:
+
+Does my resume layout look clean and ATS-friendly?
+
+Are my project descriptions clear and impact-oriented?
+
+Preferred Communication Method: Email
+
+Preferred Availability: Friday or Saturday evenings
+
+Demo 5: Higher Studies & Study Abroad
+Mentorship Topic: Higher Studies
+
+Request Title: Advice on Applying for Master's Programs in Computer Science
+
+Your Message: Hi, I am planning to apply for M.Sc. programs in CS abroad for the upcoming academic year. I am currently preparing my Statement of Purpose (SOP) and reaching out for recommendations.
+
+Specific Questions:
+
+How can I write a strong SOP that highlights my undergrad projects?
+
+How do I choose between research-focused and course-focused Master’s programs?
+
+Preferred Communication Method: Email
+
+Preferred Availability: Sunday morning or evening
+
+Demo 6: Open Source & Skill Development
+Mentorship Topic: Skill Development
+
+Request Title: How to Contribute to Open Source Projects Effectively
+
+Your Message: Hello! I want to start contributing to open-source repositories to improve my coding skills and collaborate with international developers, but large codebases feel overwhelming.
+
+Specific Questions:
+
+How do I find beginner-friendly open-source issues?
+
+What is the best practice for making clean pull requests?
+
+Preferred Communication Method: Google Meet / Email
+
+Preferred Availability: Thursday or Friday night
+
+Demo 7: Mock Interview Request
+Mentorship Topic: Interview Practice
+
+Request Title: Request for a 30-Minute Mock Technical Interview
+
+Your Message: Hi! I have an upcoming technical interview for a Software Engineer position next month. I would be extremely grateful for a quick mock interview session to get constructive feedback.
+
+Specific Questions:
+
+Can we go over Data Structures & Algorithms problem-solving techniques?
+
+How can I improve my verbal communication during live coding?
+
+Preferred Communication Method: Google Meet
+
+Preferred Availability: Saturday afternoon (2:00 PM - 5:00 PM)
+
+Demo 8: Competitive Programming to Industry Transition
+Mentorship Topic: Career Guidance
+
+Request Title: Balancing Competitive Programming with Web Development
+
+Your Message: Hello! I spend a lot of time solving CP problems on Codeforces, but I feel my practical development skills are lacking for real-world software engineering roles.
+
+Specific Questions:
+
+How much CP rating is enough for landing software engineering interviews?
+
+How should I balance CP practice with building full-stack applications?
+
+Preferred Communication Method: Email
+
+Preferred Availability: Weekday nights after 8:00 PM
+
+Demo 9: UI/UX & Frontend Career Path
+Mentorship Topic: Career Guidance
+
+Request Title: Advice on Building a Strong Frontend & UI/UX Design Portfolio
+
+Your Message: Hi! I am passionate about Frontend Development using React and Figma for design. I want to build a portfolio that demonstrates both design intuition and strong frontend engineering principles.
+
+Specific Questions:
+
+What types of projects stand out most to engineering recruiters?
+
+Should I focus heavily on CSS frameworks or pure JavaScript/React concepts?
+
+Preferred Communication Method: LinkedIn
+
+Preferred Availability: Friday afternoon or Saturday evening
+
+Demo 10: Cybersecurity & DevOps Direction
+Mentorship Topic: Skill Development
+
+Request Title: Roadmap for Getting Started in Cloud & Cybersecurity
+
+Your Message: Hello! I am interested in DevOps, cloud security, and Linux administration. Since these fields cover vast topics, I am struggling to create a step-by-step learning path.
+
+Specific Questions:
+
+Which certifications (e.g., AWS, Linux, Security+) are worth pursuing for fresh graduates?
+
+What hands-on cloud projects should I build to show proof of work?
+
+Preferred Communication Method: Email
+
+Preferred Availability: Weekends or Friday evening
