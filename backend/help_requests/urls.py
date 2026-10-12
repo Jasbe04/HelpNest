@@ -32,21 +32,21 @@ urlpatterns = [
         name="answer-list-create",
     ),
 
-    # List answers and submit a new answer.
+
     path(
         "help-requests/<int:request_id>/answers/",
         AnswerListCreateAPIView.as_view(),
         name="answer-list-create",
     ),
 
-    # Retrieve, edit, or delete an answer.
+
     path(
         "answers/<int:pk>/",
         AnswerDetailAPIView.as_view(),
         name="answer-detail",
     ),
 
-    # Accept or unaccept an answer.
+
     path(
         "answers/<int:pk>/accept/",
         AcceptAnswerAPIView.as_view(),

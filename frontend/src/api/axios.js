@@ -6,7 +6,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    // এখানে 'access'-এর পরিবর্তে 'access_token' দিতে হবে, কারণ AuthContext এ এটি 'access_token' হিসেবে সেভ করা হয়
     const accessToken = sessionStorage.getItem('access_token') 
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`

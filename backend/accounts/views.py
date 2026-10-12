@@ -49,9 +49,7 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
 
 
 class AlumniListAPIView(generics.ListAPIView):
-    """
-    Public API for browsing and searching alumni.
-    """
+    
 
     serializer_class = AlumniSerializer
     permission_classes = [AllowAny]
@@ -61,7 +59,7 @@ class AlumniListAPIView(generics.ListAPIView):
             user__account_type="alumni"
         ).select_related("user")
 
-        # Search by username, first name, last name, company, job title, or skills.
+
         search = self.request.query_params.get("search", "").strip()
         if search:
             queryset = queryset.filter(
@@ -73,17 +71,16 @@ class AlumniListAPIView(generics.ListAPIView):
                 | Q(skills__icontains=search)
             )
 
-        # Filter by industry.
+
         industry = self.request.query_params.get("industry", "").strip()
         if industry:
             queryset = queryset.filter(industry__iexact=industry)
 
-        # Filter by company.
         company = self.request.query_params.get("company", "").strip()
         if company:
             queryset = queryset.filter(company__icontains=company)
 
-        # Filter by mentorship availability.
+
         mentorship = (
             self.request.query_params.get("mentorship", "").strip().lower()
         )
@@ -96,9 +93,7 @@ class AlumniListAPIView(generics.ListAPIView):
 
 
 class AlumniDetailAPIView(generics.RetrieveAPIView):
-    """
-    Public API for retrieving a single alumni profile.
-    """
+    
 
     serializer_class = AlumniSerializer
     permission_classes = [AllowAny]
@@ -110,7 +105,7 @@ class AlumniDetailAPIView(generics.RetrieveAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         pk = self.kwargs.get("pk")
 
-        # Match either the profile ID or the user ID.
+
         obj = get_object_or_404(
             queryset, Q(pk=pk) | Q(user__id=pk)
         )

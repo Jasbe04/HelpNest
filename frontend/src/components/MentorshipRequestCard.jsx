@@ -19,21 +19,18 @@ function MentorshipRequestDetails() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Safely normalize the account type (handles null, undefined, spaces, and case)
   const accountType = user?.account_type 
     ? String(user.account_type).trim().toLowerCase() 
     : ''
 
   const isAlumni = accountType === 'alumni'
 
-  // Normalize the request status.
   const status = request?.status 
     ? String(request.status).trim().toLowerCase() 
     : ''
 
   const isPending = status === 'pending'
 
-  // Back navigation based on account type.
   const backPath = isAlumni
     ? '/received-mentorships'
     : '/my-mentorships'
@@ -59,7 +56,6 @@ function MentorshipRequestDetails() {
     loadRequest()
   }, [loadRequest])
 
-  // Alumni-only action: Accept or Reject.
   const handleDecision = async (decision) => {
     if (!isAlumni || !isPending || processing) {
       return
@@ -100,7 +96,6 @@ function MentorshipRequestDetails() {
     }
   }
 
-  // Authentication loading.
   if (authLoading || loading) {
     return (
       <div className="container py-5 text-center">
@@ -114,7 +109,6 @@ function MentorshipRequestDetails() {
     )
   }
 
-  // Handle missing user.
   if (!user) {
     return (
       <div className="container py-5">
@@ -128,7 +122,6 @@ function MentorshipRequestDetails() {
     )
   }
 
-  // Handle loading errors.
   if (error && !request) {
     return (
       <div className="container py-5">
@@ -146,7 +139,6 @@ function MentorshipRequestDetails() {
     )
   }
 
-  // Handle a missing request.
   if (!request) {
     return (
       <div className="container py-5">
@@ -157,7 +149,6 @@ function MentorshipRequestDetails() {
     )
   }
 
-  // Status badge styling.
   const statusClasses = {
     pending: 'bg-warning text-dark',
     accepted: 'bg-success',

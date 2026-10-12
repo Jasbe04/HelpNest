@@ -20,14 +20,14 @@ class CustomUser(AbstractUser):
 
 
 class Profile(models.Model):
-    # Relation
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="profile",
     )
 
-    # Common Information
+
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(
         upload_to="profile_pictures/",
@@ -42,23 +42,22 @@ class Profile(models.Model):
         help_text="Enter skills separated by commas.",
     )
 
-    # Student Academic Information
     current_term = models.CharField(
         max_length=100,
         blank=True,
         help_text="Current studying year or academic term.",
     )
 
-    # Alumni Professional Information
+
     linkedin_url = models.URLField(blank=True)
     company = models.CharField(max_length=255, blank=True)
     job_title = models.CharField(max_length=255, blank=True)
     industry = models.CharField(max_length=100, blank=True)
 
-    # Alumni Mentorship Preference
+
     is_available_for_mentorship = models.BooleanField(default=False)
 
-    # Timestamps
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

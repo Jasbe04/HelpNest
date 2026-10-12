@@ -50,8 +50,6 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (formData) => {
     await api.post('accounts/register/', formData)
 
-    // Registration creates the account but does not automatically log in.
-    // The user must log in separately.
   }, [])
 
   const updateUser = useCallback((updatedUser) => {

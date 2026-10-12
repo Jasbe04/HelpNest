@@ -81,13 +81,13 @@ class MentorshipRequest(models.Model):
 class Notification(models.Model):
 
     class NotificationType(models.TextChoices):
-        # Mentorship notifications
+
         NEW_REQUEST = "new_request", "New Mentorship Request"
         REQUEST_ACCEPTED = "request_accepted", "Request Accepted"
         REQUEST_REJECTED = "request_rejected", "Request Rejected"
         REQUEST_CANCELLED = "request_cancelled", "Request Cancelled"
 
-        # Question and answer notifications
+
         NEW_ANSWER = "new_answer", "New Answer"
         ANSWER_ACCEPTED = "answer_accepted", "Answer Accepted"
 

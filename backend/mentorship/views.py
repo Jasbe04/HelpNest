@@ -97,7 +97,7 @@ class MentorshipRequestDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        # Fixed: using Q objects instead of .union() to support pk lookups cleanly
+
         return MentorshipRequest.objects.filter(
             Q(student=user) | Q(mentor=user)
         ).select_related(

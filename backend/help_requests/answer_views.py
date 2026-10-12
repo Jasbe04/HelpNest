@@ -11,13 +11,7 @@ from .answer_serializers import AnswerSerializer
 
 
 class AnswerListCreateAPIView(generics.ListCreateAPIView):
-    """
-    GET:
-        List all answers for a help request.
-
-    POST:
-        Create a new answer for a help request.
-    """
+    
 
     serializer_class = AnswerSerializer
 
@@ -38,7 +32,7 @@ class AnswerListCreateAPIView(generics.ListCreateAPIView):
         )
 
     def get(self, request, *args, **kwargs):
-        # Make sure the help request exists.
+     
         get_object_or_404(
             HelpRequest,
             pk=self.kwargs["request_id"]
@@ -47,13 +41,13 @@ class AnswerListCreateAPIView(generics.ListCreateAPIView):
         return super().get(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        # Get the help request from the URL.
+  
         help_request = get_object_or_404(
             HelpRequest,
             pk=self.kwargs["request_id"]
         )
 
-        # Automatically assign the request and logged-in author.
+
         serializer.save(
             request=help_request,
             author=self.request.user
@@ -61,16 +55,7 @@ class AnswerListCreateAPIView(generics.ListCreateAPIView):
 
 
 class AnswerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    GET:
-        Retrieve one answer.
-
-    PUT/PATCH:
-        Update your own answer.
-
-    DELETE:
-        Delete your own answer.
-    """
+    
 
     serializer_class = AnswerSerializer
     permission_classes = [IsAuthenticated]
@@ -84,7 +69,6 @@ class AnswerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     def check_object_permissions(self, request, obj):
         super().check_object_permissions(request, obj)
 
-        # Only the answer's author can edit or delete it.
         if request.method in ["PUT", "PATCH", "DELETE"]:
             if obj.author_id != request.user.id:
                 raise PermissionDenied(
@@ -93,12 +77,7 @@ class AnswerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class AcceptAnswerAPIView(APIView):
-    """
-    The author of the help request can accept or unaccept
-    an individual answer.
-
-    Multiple answers can be accepted simultaneously.
-    """
+    
 
     permission_classes = [IsAuthenticated]
 
@@ -108,16 +87,13 @@ class AcceptAnswerAPIView(APIView):
             pk=pk
         )
 
-        # Only the person who created the help request
-        # can accept or unaccept its answers.
+     
         if answer.request.author_id != request.user.id:
             raise PermissionDenied(
                 "Only the author of the help request "
                 "can accept or unaccept answers."
             )
 
-        # Toggle only this answer.
-        # Other answers remain unchanged.
         answer.is_accepted = not answer.is_accepted
 
         answer.save(

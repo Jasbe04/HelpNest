@@ -1,15 +1,11 @@
 from pathlib import Path
 
-# =========================================================
-# BASE DIRECTORY
-# =========================================================
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# =========================================================
-# SECURITY SETTINGS
-# =========================================================
+
 
 SECRET_KEY = 'django-insecure-+2m^1$m1d_&)g1)97fhbyh$nril*^_qtrbidlu)zv0+v!=0-!0'
 
@@ -21,12 +17,10 @@ ALLOWED_HOSTS = [
 ]
 
 
-# =========================================================
-# APPLICATION DEFINITION
-# =========================================================
+
 
 INSTALLED_APPS = [
-    # Django applications
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,26 +28,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party applications
     'rest_framework',
     'corsheaders',
 
-    # HelpNest applications
+
     'accounts',
     'help_requests',
     'mentorship',
 ]
 
 
-# =========================================================
-# MIDDLEWARE
-# =========================================================
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 
-    # CORS middleware must appear before CommonMiddleware
     'corsheaders.middleware.CorsMiddleware',
 
     'django.middleware.common.CommonMiddleware',
@@ -64,26 +53,17 @@ MIDDLEWARE = [
 ]
 
 
-# =========================================================
-# CORS CONFIGURATION
-# =========================================================
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 
 
-# =========================================================
-# URL CONFIGURATION
-# =========================================================
+
 
 ROOT_URLCONF = 'config.urls'
 
 
-# =========================================================
-# TEMPLATE CONFIGURATION
-# =========================================================
 
 TEMPLATES = [
     {
@@ -104,16 +84,11 @@ TEMPLATES = [
 ]
 
 
-# =========================================================
-# WSGI CONFIGURATION
-# =========================================================
+
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# =========================================================
-# DATABASE CONFIGURATION
-# =========================================================
 
 DATABASES = {
     'default': {
@@ -123,16 +98,10 @@ DATABASES = {
 }
 
 
-# =========================================================
-# CUSTOM USER MODEL
-# =========================================================
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
-# =========================================================
-# PASSWORD VALIDATION
-# =========================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -162,10 +131,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# =========================================================
-# INTERNATIONALIZATION
-# =========================================================
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Dhaka'
@@ -174,26 +139,15 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# =========================================================
-# STATIC FILES
-# =========================================================
-
 STATIC_URL = 'static/'
 
 
-# =========================================================
-# MEDIA FILES
-# =========================================================
+
 
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
-# =========================================================
-# DJANGO REST FRAMEWORK
-# =========================================================
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -205,9 +159,5 @@ REST_FRAMEWORK = {
     ],
 }
 
-
-# =========================================================
-# DEFAULT PRIMARY KEY
-# =========================================================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
